@@ -66,4 +66,15 @@ class ItineraryItems(ViewSet):
         pass
 
     def list(self, request):
-        pass
+        '''GET requests to itinerary items resource
+
+        Returns:
+            Response -- JSON serialized list of itinerary items
+        '''
+        itineraries = Itinerary.objects.all()
+        serializer = ItinerarySerializer(
+            itineraries,
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
