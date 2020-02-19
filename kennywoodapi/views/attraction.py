@@ -65,6 +65,23 @@ class Attractions(ViewSet):
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+    def destroy(self, request, pk=None):
+        '''DELETE request
+
+        Returns:
+            Response -- 200, 404, or 500 status code
+        '''
+        try:
+            attraction = Attraction.objects.get(pk=pk)
+            attraction.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        except Attraction.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def list(self, request):
         """Handle GET requests to park attractions resource
 
