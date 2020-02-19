@@ -30,6 +30,12 @@ class Attractions(ViewSet):
         Returns:
             Response -- JSON serialized instance
         '''
+        attraction = Attraction()
+        attraction.name = request.data['name']
+        attraction.area_id = request.data['area_id']
+        attraction.save()
+
+        serializer = AttractionSerializer(attraction, context={'request': request})
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
@@ -45,7 +51,20 @@ class Attractions(ViewSet):
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
-            
+
+    def update(self, request, pk=None):
+        '''PUT request
+
+        Returns:
+            response -- Empty body with 204 status code
+        '''
+        attraction = Attraction.objects.get(pk=pk)
+        attraction.name = request.data['name']
+        attraction.area_id = request.data['area_id']
+        attraction.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
     def list(self, request):
         """Handle GET requests to park attractions resource
 
