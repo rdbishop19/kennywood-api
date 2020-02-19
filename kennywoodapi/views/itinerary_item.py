@@ -60,10 +60,37 @@ class ItineraryItems(ViewSet):
 
     # update takes 3 args
     def update(self, request, pk=None):
-        pass
+        '''PUT requests
 
-    def destroy(self, request):
-        pass
+        Returns:
+            Response -- Empty body with 204 status code
+        '''
+        itinerary = Itinerary.objects.get(pk=pk)
+        itinerary.starttime = request.data['starttime']
+        itinerary.customer_id = request.auth.user.id
+        itinerary.attraction_id = request.data['attraction_id']
+        itinerary.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    def destroy(self, request, pk=None):
+        '''DELETE requests
+        
+        Returns:
+            Response -- 200, 404, or 500 status code
+        '''
+        try:
+            itinerary = Itinerary.objects.get(pk=pk)
+            itinerary.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except Itinerary.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def list(self, request):
         '''GET requests to itinerary items resource
